@@ -36,7 +36,7 @@ Returns a new instance of date-events emitter. Equivalent to `new require('date-
 * `hour`
 * `day`
 
-Should probably ad more...
+Should probably add more...
 
 # Testing
 
