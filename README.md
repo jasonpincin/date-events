@@ -27,6 +27,7 @@ console.log('Script running, will print time each second and exit once the minut
 
 ## .createEmitter()
 -------------------
+
 Returns a new instance of date-events emitter. Equivalent to `new require('date-events')`
 
 # Supported Events
