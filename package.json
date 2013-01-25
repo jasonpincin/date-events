@@ -1,0 +1,27 @@
+{
+    "name": "date-events"
+  , "description": "Emits date and time related events"
+  , "version": "0.1.0"
+  , "keywords": [
+      "date"
+    , "EventEmitter"
+    , "event"
+    , "calendar"
+  ]
+  , "repository" : {
+       "type" : "git"
+      ,"url" : "https://github.com/jasonpincin/date-events.git"
+  }
+  , "dependencies": {
+  }
+  , "devDependencies": {
+      "tap": "~0.3.3"
+  }
+  , "scripts": {
+      "test" : "tap test"
+  }
+  ,"engine" : {
+      "node" : ">=0.8.0"
+  }
+  ,"author" : {"name" : "Jason Pincin", "email" : "jason@pincin.com" }
+}
