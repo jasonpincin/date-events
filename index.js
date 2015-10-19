@@ -1,95 +1,151 @@
-var EventEmitter    = require('events').EventEmitter
-,   util            = require('util')
-,   DateEmitter
+var EventEmitter    = require('events').EventEmitter,
+    util            = require('util'),
+    DateEmitter;
 
-module.exports = DateEmitter = function () {
+module.exports = DateEmitter = function (precision) {
 
-    if ( !(this instanceof DateEmitter) ) 
-        return new DateEmitter()
+    var self = this,
+        now = new Date(),
+        interval = 10000;
 
-    self = this
-    this.timeouts = {
-        second  : null,
-        minute  : null,
-        hour    : null,
-        day     : null
+    EventEmitter.call(this);
+
+    if (precision && precision <= 3600000) {
+        interval = precision;
     }
 
-    EventEmitter.call(this)
+    this.year = now.getFullYear();
+    this.month = now.getMonth() + 1;
+    this.date = now.getDate();
+    this.weekday = now.getDay();
+    this.hour = now.getHours();
 
-    this.on('newListener', this.activateTimer.bind(this))
-}
-util.inherits(DateEmitter, EventEmitter)
+    var eventCollection = function() {
+        var str = '',
+            now = new Date(),
 
-DateEmitter.prototype.activateTimer = function (t) {
-    var self = this
+            year = now.getFullYear(),
+            month = now.getMonth(),
+            date = now.getDate(),
+            weekday = now.getDay(),
+            hour = now.getHours();
 
-    if (t in next && this.timeouts[t] === null) {
-        function emitTimer () {
-            self.timeouts[t] = setTimeout( emitTimer, next[t]() )
-            self.emit( t, new Date )
+        if (year !== self.year) {
+            self.emit('year', year);
+            self.year = year;
         }
 
-        this.timeouts[t] = setTimeout( emitTimer, next[t]() )
-    }
-} 
-DateEmitter.prototype.removeListener = function (evt, listener) {
-    DateEmitter.super_.prototype.removeListener.apply(this, arguments)
-    this.onRemoveListener()
-}
-DateEmitter.prototype.removeAllListeners = function (evt) {
-    DateEmitter.super_.prototype.removeAllListeners.apply(this, arguments)
-    this.onRemoveListener()
-}
-DateEmitter.prototype.onRemoveListener = function () {
-    for (t in this.timeouts) {
-        if (this.listeners(t).length === 0 && this.timeouts[t]) {
-            clearTimeout(this.timeouts[t])
-            this.timeouts[t] = null
+        if (month + 1 !== self.month) {
+            str = '';
+            switch (month) {
+                case 0:
+                    str = 'January';
+                    break;
+                case 1:
+                    str = 'February';
+                    break;
+                case 2:
+                    str = 'March';
+                    break;
+                case 3:
+                    str = 'April';
+                    break;
+                case 4:
+                    str = 'May';
+                    break;
+                case 5:
+                    str = 'June';
+                    break;
+                case 6:
+                    str = 'July';
+                    break;
+                case 7:
+                    str = 'August';
+                    break;
+                case 8:
+                    str = 'September';
+                    break;
+                case 9:
+                    str = 'October';
+                    break;
+                case 10:
+                    str = 'November';
+                    break;
+                default:
+                    str = 'December';
+
+            }
+            self.emit('month', month + 1, str);
+            self.emit('month-' + str);
+            self.emit('month-' + str.substr(0, 3));
+            self.emit('month-' + (month + 1));
+            self.month = month + 1;
         }
-    }
-}
 
-var next = {
-    second : function (d) {
-        var  d = new Date
-        ,   _d = new Date(d)
-        _d.setSeconds(d.getSeconds()+1)
-        _d.setMilliseconds(0)
-        return _d - d
-    },
+        if (date !== self.date) {
+            self.emit('date', date);
+            self.emit('date-' + date);
+            self.date = date;
+        }
 
-    minute : function (d) {
-        var  d = d || new Date
-        ,   _d = new Date(d)
-        _d.setMinutes(d.getMinutes()+1)
-        _d.setSeconds(0)
-        _d.setMilliseconds(0)
-        return _d - d
-    },
+        if (weekday !== self.weekday) {
+            str = '';
+            switch (weekday) {
+                case 1:
+                    str = 'Monday';
+                    break;
+                case 2:
+                    str = 'Tuesday';
+                    break;
+                case 3:
+                    str = 'Wednesday';
+                    break;
+                case 4:
+                    str = 'Thursday';
+                    break;
+                case 5:
+                    str = 'Friday';
+                    break;
+                case 6:
+                    str = 'Saturday';
+                    break;
+                default:
+                    str = 'Sunday';
+            }
+            self.emit('weekday', weekday, str);
+            self.emit('weekday-' + str);
+            self.emit('weekday-' + str.substr(0, 3));
+            self.emit('weekday-' + str.substr(0, 2));
+            self.emit('weekday-' + weekday);
+            self.weekday = weekday;
+        }
 
-    hour : function (d) {
-        var  d = d || new Date
-        ,   _d = new Date(d)
-        _d.setHours(d.getHours()+1)
-        _d.setMinutes(0)
-        _d.setSeconds(0)
-        _d.setMilliseconds(0)
-        return _d - d
-    },
+        if (hour !== self.hour) {
+            self.emit('hour', hour);
+            self.emit('hour-' + hour);
+            if (hour === 0) {
+                self.emit('hour-24');
+            }
+            self.hour = hour;
+        }
+    };
 
-    day : function (d) {
-        var  d = d || new Date
-        ,   _d = new Date(d)
-        _d.setDate(d.getDate()+1)
-        _d.setHours(0)
-        _d.setMinutes(0)
-        _d.setSeconds(0)
-        _d.setMilliseconds(0)
-        return _d - d
-    }
-}
+    var timer = setInterval(eventCollection, interval);
 
-DateEmitter.createEmitter = function () {
-    return new DateEmitter()
-}
+    this.stop = function() {
+        if (timer) {
+            clearInterval(timer);
+            timer = null;
+            self.emit('stop');
+        }
+    };
+
+    this.start = function() {
+        if (!timer) {
+            timer = setInterval(eventCollection, interval);
+            self.emit('start');
+        }
+    };
+};
+
+util.inherits(DateEmitter, EventEmitter);
