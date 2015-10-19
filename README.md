@@ -28,8 +28,8 @@ dtEvents.on('someEvent', function () {
     ; /* some function body that is called on each trigger of "someEvent"
     In all event-callbacks you have access to the numerical properties
     identical to the standard event-names.
-    For example in the `.on('month', ...)` callback you can use `this.date`
-    to get the day. */
+    For example in the ".on('date', ...)" callback you can use "this.month"
+    to get the month. */
 });
 
 dtEvents.once('otherEvent', function () {
