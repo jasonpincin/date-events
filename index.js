@@ -23,7 +23,8 @@ module.exports = function createDateEmitter (options) {
             date   : now.getDate(),
             weekday: now.getDay(),
             hour   : now.getHours(),
-            minute : now.getMinutes()
+            minute : now.getMinutes(),
+            second : now.getSeconds()
         }
 
     emitter.on('newListener', listenerAdded)
@@ -42,40 +43,35 @@ module.exports = function createDateEmitter (options) {
 
         if (date !== last.date) {
             emitter.emit('date', date)
-            emitter.emit(fmt(dFmt, year, month, date))
-
-            emitter.emit(fmt(dFmt, year, month, '*'))
-            emitter.emit(fmt(dFmt, year, '*', date))
-            emitter.emit(fmt(dFmt, year, '*', '*'))
-
-            emitter.emit(fmt(dFmt, '*', month, date))
-            emitter.emit(fmt(dFmt, '*', month, '*'))
-
-            emitter.emit(fmt(dFmt, '*', '*', date))
-            emitter.emit(fmt(dFmt, '*', '*', '*'))
-
+            ;[year, '*'].forEach(function (year) {
+                ;[month, '*'].forEach(function (month) {
+                    ;[date, '*'].forEach(function (date) {
+                        emitter.emit(fmt(dFmt, year, month, date), now)
+                    })
+                })
+            })
             last.date = date
         }
 
         if (minute !== last.minute) {
+            var minutePadded = ('0' + minute).slice(-2)
             emitter.emit('minute', minute)
-
-            [hour, '*'].forEach(function (hour) {
-                emitter.emit(fmt(dtFmt, year, month, date, hour, minute))
-
-                emitter.emit(fmt(dtFmt, year, month, '*', hour, minute))
-                emitter.emit(fmt(dtFmt, year, '*', date, hour, minute))
-                emitter.emit(fmt(dFmt, year, '*', '*', hour, minute))
-
-                emitter.emit(fmt(dtFmt, '*', month, date, hour, minute))
-                emitter.emit(fmt(dtFmt, '*', month, '*', hour, minute))
-
-                emitter.emit(fmt(dtFmt, '*', '*', date, hour, minute))
-                emitter.emit(fmt(dtFmt, '*', '*', '*', hour, minute))
-
-                emitter.emit(fmt(tFmt, hour, minute))
+            ;[year, '*'].forEach(function (year) {
+                ;[month, '*'].forEach(function (month) {
+                    ;[date, '*'].forEach(function (date) {
+                        ;[hour, '*'].forEach(function (hour) {
+                            ;[minutePadded, '*'].forEach(function (minute) {
+                                emitter.emit(fmt(dtFmt, year, month, date, hour, minute), now)
+                            })
+                        })
+                    })
+                })
             })
-
+            ;[hour, '*'].forEach(function (hour) {
+                ;[minutePadded, '*'].forEach(function (minute) {
+                    emitter.emit(fmt(tFmt, hour, minute), now)
+                })
+            })
             last.minute = minute
         }
 
@@ -100,10 +96,12 @@ module.exports = function createDateEmitter (options) {
             emitter.emit('hour', hour)
             last.hour = hour
         }
+
+        emitter.emit('second', ++last.second)
     }
 
     function listenerAdded () {
-        listenersCount++
+        listenerCount++
         if (!timeout && !interval) timeout = setTimeout(start, 1000 - (new Date).getMilliseconds())
     }
 
