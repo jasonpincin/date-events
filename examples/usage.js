@@ -1,6 +1,4 @@
-var createDateEmitter = require('..')
-
-var clock = createDateEmitter()
+var clock = require('..')()
 
 console.log('Count-down until next minute...')
 
