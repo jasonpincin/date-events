@@ -1,27 +1,40 @@
 {
-    "name": "date-events"
-  , "description": "Emits date and time related events"
-  , "version": "0.1.0"
-  , "keywords": [
-      "date"
-    , "EventEmitter"
-    , "event"
-    , "calendar"
-  ]
-  , "repository" : {
-       "type" : "git"
-      ,"url" : "https://github.com/jasonpincin/date-events.git"
+  "name": "date-events",
+  "version": "1.0.0",
+  "description": "[PKGDESC]",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jasonpincin/date-events.git"
+  },
+  "keywords": [
+    "date",
+    "EventEmitter",
+    "event",
+    "calendar"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jasonpincin/date-events/issues"
+  },
+  "homepage": "https://github.com/jasonpincin/date-events",
+  "author": {
+    "name": "Jason Pincin",
+    "email": "jason@pincin.com",
+    "url": "http://jason.pincin.com/"
+  },
+  "contributors": [
+  ],
+  "devDependencies": {
+    "@jasonpincin/standard": "~5.0.0-6",
+    "istanbul": "~0.3.17",
+    "opn": "~1.0.2",
+    "tap-dot": "~1.0.0",
+    "tap-spec": "~4.1.0",
+    "tape": "~4.2.0"
+  },
+  "scripts": {
+    "test": "make npm-test",
+    "coverage": "make npm-coverage"
   }
-  , "dependencies": {
-  }
-  , "devDependencies": {
-      "tap": "~0.3.3"
-  }
-  , "scripts": {
-      "test" : "tap test"
-  }
-  ,"engine" : {
-      "node" : ">=0.8.0"
-  }
-  ,"author" : {"name" : "Jason Pincin", "email" : "jason@pincin.com" }
 }

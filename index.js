@@ -1,95 +1,133 @@
-var EventEmitter    = require('events').EventEmitter
-,   util            = require('util')
-,   DateEmitter
+var EventEmitter = require('events').EventEmitter,
+    fmt          = require('util').format
 
-module.exports = DateEmitter = function () {
+var months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
+var days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
 
-    if ( !(this instanceof DateEmitter) ) 
-        return new DateEmitter()
+var dFmt  = '%s-%s-%s'
+var dtFmt = '%s-%s-%s %s:%s'
+var tFmt  = '%s:%s'
 
-    self = this
-    this.timeouts = {
-        second  : null,
-        minute  : null,
-        hour    : null,
-        day     : null
-    }
+module.exports = function createDateEmitter (options) {
+    options = typeof options === 'object' ? options : {}
+    options.startDate = options.startDate instanceof Date ? options.startDate : new Date
+    options.unref = typeof options.unref === 'boolean' ? options.unref : false
 
-    EventEmitter.call(this)
-
-    this.on('newListener', this.activateTimer.bind(this))
-}
-util.inherits(DateEmitter, EventEmitter)
-
-DateEmitter.prototype.activateTimer = function (t) {
-    var self = this
-
-    if (t in next && this.timeouts[t] === null) {
-        function emitTimer () {
-            self.timeouts[t] = setTimeout( emitTimer, next[t]() )
-            self.emit( t, new Date )
+    var emitter       = new EventEmitter,
+        listenerCount = 0,
+        timeout       = null,
+        interval      = null,
+        now           = options.startDate,
+        last          = {
+            year   : now.getFullYear(),
+            month  : now.getMonth() + 1,
+            date   : now.getDate(),
+            weekday: now.getDay(),
+            hour   : now.getHours(),
+            minute : now.getMinutes(),
+            second : now.getSeconds()
         }
 
-        this.timeouts[t] = setTimeout( emitTimer, next[t]() )
-    }
-} 
-DateEmitter.prototype.removeListener = function (evt, listener) {
-    DateEmitter.super_.prototype.removeListener.apply(this, arguments)
-    this.onRemoveListener()
-}
-DateEmitter.prototype.removeAllListeners = function (evt) {
-    DateEmitter.super_.prototype.removeAllListeners.apply(this, arguments)
-    this.onRemoveListener()
-}
-DateEmitter.prototype.onRemoveListener = function () {
-    for (t in this.timeouts) {
-        if (this.listeners(t).length === 0 && this.timeouts[t]) {
-            clearTimeout(this.timeouts[t])
-            this.timeouts[t] = null
+    emitter.on('newListener', listenerAdded)
+    emitter.on('removeListener', listenerRemoved)
+
+    return emitter
+
+    function eachSecond () {
+        var now     = new Date,
+            year    = now.getFullYear(),
+            month   = now.getMonth() + 1,
+            date    = now.getDate(),
+            weekday = now.getDay(),
+            hour    = now.getHours(),
+            minute  = now.getMinutes()
+
+        var monthPadded, datePadded, hourPadded, minutePadded
+
+        if (date !== last.date) {
+            emitter.emit('date', date)
+            monthPadded = ('0' + month).slice(-2)
+            datePadded = ('0' + date).slice(-2)
+            ;[year, '*'].forEach(function (year) {
+                ;[monthPadded, '*'].forEach(function (month) {
+                    ;[datePadded, '*'].forEach(function (date) {
+                        emitter.emit(fmt(dFmt, year, month, date), now)
+                    })
+                })
+            })
+            last.date = date
         }
+
+        if (minute !== last.minute) {
+            monthPadded = ('0' + month).slice(-2)
+            datePadded = ('0' + date).slice(-2)
+            hourPadded = ('0' + hour).slice(-2)
+            minutePadded = ('0' + minute).slice(-2)
+            emitter.emit('minute', minute)
+            ;[year, '*'].forEach(function (year) {
+                ;[monthPadded, '*'].forEach(function (month) {
+                    ;[datePadded, '*'].forEach(function (date) {
+                        ;[hourPadded, '*'].forEach(function (hour) {
+                            ;[minutePadded, '*'].forEach(function (minute) {
+                                emitter.emit(fmt(dtFmt, year, month, date, hour, minute), now)
+                            })
+                        })
+                    })
+                })
+            })
+            ;[hourPadded, '*'].forEach(function (hour) {
+                ;[minutePadded, '*'].forEach(function (minute) {
+                    emitter.emit(fmt(tFmt, hour, minute), now)
+                })
+            })
+            last.minute = minute
+        }
+
+        if (year !== last.year) {
+            emitter.emit('year', year)
+            last.year = year
+        }
+
+        if (month !== last.month) {
+            emitter.emit('month', month, months[month - 1])
+            emitter.emit(months[month - 1])
+            last.month = month
+        }
+
+        if (weekday !== last.weekday) {
+            emitter.emit('weekday', weekday, days[weekday - 1])
+            emitter.emit(days[weekday - 1])
+            last.weekday = weekday
+        }
+
+        if (hour !== last.hour) {
+            emitter.emit('hour', hour)
+            last.hour = hour
+        }
+
+        emitter.emit('second', ++last.second)
     }
-}
 
-var next = {
-    second : function (d) {
-        var  d = new Date
-        ,   _d = new Date(d)
-        _d.setSeconds(d.getSeconds()+1)
-        _d.setMilliseconds(0)
-        return _d - d
-    },
-
-    minute : function (d) {
-        var  d = d || new Date
-        ,   _d = new Date(d)
-        _d.setMinutes(d.getMinutes()+1)
-        _d.setSeconds(0)
-        _d.setMilliseconds(0)
-        return _d - d
-    },
-
-    hour : function (d) {
-        var  d = d || new Date
-        ,   _d = new Date(d)
-        _d.setHours(d.getHours()+1)
-        _d.setMinutes(0)
-        _d.setSeconds(0)
-        _d.setMilliseconds(0)
-        return _d - d
-    },
-
-    day : function (d) {
-        var  d = d || new Date
-        ,   _d = new Date(d)
-        _d.setDate(d.getDate()+1)
-        _d.setHours(0)
-        _d.setMinutes(0)
-        _d.setSeconds(0)
-        _d.setMilliseconds(0)
-        return _d - d
+    function listenerAdded () {
+        listenerCount++
+        if (!timeout && !interval) timeout = setTimeout(start, 1000 - (new Date).getMilliseconds())
     }
-}
 
-DateEmitter.createEmitter = function () {
-    return new DateEmitter()
+    function listenerRemoved () {
+        listenerCount--
+        if (!listenerCount) stop()
+    }
+
+    function start () {
+        interval = setInterval(eachSecond, 1000)
+        if (options.unref) interval.unref()
+        eachSecond()
+    }
+
+    function stop () {
+        clearTimeout(timeout)
+        clearInterval(interval)
+        timeout = null
+        interval = null
+    }
 }
