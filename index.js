@@ -11,6 +11,7 @@ var tFmt  = '%s:%s'
 module.exports = function createDateEmitter (options) {
     options = typeof options === 'object' ? options : {}
     options.startDate = options.startDate instanceof Date ? options.startDate : new Date
+    options.unref = typeof options.unref === 'boolean' ? options.unref : false
 
     var emitter       = new EventEmitter,
         listenerCount = 0,
@@ -41,11 +42,15 @@ module.exports = function createDateEmitter (options) {
             hour    = now.getHours(),
             minute  = now.getMinutes()
 
+        var monthPadded, datePadded, hourPadded, minutePadded
+
         if (date !== last.date) {
             emitter.emit('date', date)
+            monthPadded = ('0' + month).slice(-2)
+            datePadded = ('0' + date).slice(-2)
             ;[year, '*'].forEach(function (year) {
-                ;[month, '*'].forEach(function (month) {
-                    ;[date, '*'].forEach(function (date) {
+                ;[monthPadded, '*'].forEach(function (month) {
+                    ;[datePadded, '*'].forEach(function (date) {
                         emitter.emit(fmt(dFmt, year, month, date), now)
                     })
                 })
@@ -54,12 +59,15 @@ module.exports = function createDateEmitter (options) {
         }
 
         if (minute !== last.minute) {
-            var minutePadded = ('0' + minute).slice(-2)
+            monthPadded = ('0' + month).slice(-2)
+            datePadded = ('0' + date).slice(-2)
+            hourPadded = ('0' + hour).slice(-2)
+            minutePadded = ('0' + minute).slice(-2)
             emitter.emit('minute', minute)
             ;[year, '*'].forEach(function (year) {
-                ;[month, '*'].forEach(function (month) {
-                    ;[date, '*'].forEach(function (date) {
-                        ;[hour, '*'].forEach(function (hour) {
+                ;[monthPadded, '*'].forEach(function (month) {
+                    ;[datePadded, '*'].forEach(function (date) {
+                        ;[hourPadded, '*'].forEach(function (hour) {
                             ;[minutePadded, '*'].forEach(function (minute) {
                                 emitter.emit(fmt(dtFmt, year, month, date, hour, minute), now)
                             })
@@ -67,7 +75,7 @@ module.exports = function createDateEmitter (options) {
                     })
                 })
             })
-            ;[hour, '*'].forEach(function (hour) {
+            ;[hourPadded, '*'].forEach(function (hour) {
                 ;[minutePadded, '*'].forEach(function (minute) {
                     emitter.emit(fmt(tFmt, hour, minute), now)
                 })
@@ -112,6 +120,7 @@ module.exports = function createDateEmitter (options) {
 
     function start () {
         interval = setInterval(eachSecond, 1000)
+        if (options.unref) interval.unref()
         eachSecond()
     }
 
