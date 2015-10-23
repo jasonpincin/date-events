@@ -4,9 +4,10 @@ var EventEmitter = require('events').EventEmitter,
 var months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
 var days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
 
-var dFmt  = '%s-%s-%s'
-var dtFmt = '%s-%s-%s %s:%s'
-var tFmt  = '%s:%s'
+var dFmt   = '%s-%s-%s'
+var dtFmt  = '%s-%s-%s %s:%s'
+var wdtFmt = '%s %s:%s'
+var tFmt   = '%s:%s'
 
 module.exports = function createDateEmitter (options) {
     options = typeof options === 'object' ? options : {}
@@ -95,8 +96,15 @@ module.exports = function createDateEmitter (options) {
         }
 
         if (weekday !== last.weekday) {
+            hourPadded = ('0' + hour).slice(-2)
+            minutePadded = ('0' + minute).slice(-2)
             emitter.emit('weekday', weekday, days[weekday - 1])
             emitter.emit(days[weekday - 1])
+            ;[hourPadded, '*'].forEach(function (hour) {
+                ;[minutePadded, '*'].forEach(function (minute) {
+                    emitter.emit(fmt(wdtFmt, days[weekday - 1], hour, minute), now)
+                })
+            })
             last.weekday = weekday
         }
 

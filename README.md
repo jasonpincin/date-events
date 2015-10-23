@@ -58,8 +58,9 @@ The following events will be emitted at the proper times:
 * `hour` - emitted with hour number (0-23)
 * `minute` - emitted with minute number (0-59)
 * `second` - emitted with second number (0-59)
-* `january - december` - emitted at start of corresponding month, with no value
-* `sunday - saturday` - emitted at start of corresponding days, with no value
+* `january` through `december` - emitted at start of corresponding month, with no value
+* `sunday` through `saturday` - emitted at start of corresponding days, with no value
+* `sunday 00:00` through `saturday 23:59` - emitted at appropriate time of corresponding day
 * `YYYY-MM-DD` - emitted with Javascript `Date` object
 * `YYYY-MM-DD HH:MM` - emiitetd with Javascript `Date` object
 * `HH:MM` - emitted with Javascript `Date` object
