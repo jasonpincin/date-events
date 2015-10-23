@@ -2,7 +2,7 @@ var EventEmitter = require('events').EventEmitter,
     fmt          = require('util').format
 
 var months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
-var days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+var days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
 
 var dFmt  = '%s-%s-%s'
 var dtFmt = '%s-%s-%s %s:%s'
@@ -38,7 +38,7 @@ module.exports = function createDateEmitter (options) {
             year    = now.getFullYear(),
             month   = now.getMonth() + 1,
             date    = now.getDate(),
-            weekday = now.getDay(),
+            weekday = now.getDay() + 1,
             hour    = now.getHours(),
             minute  = now.getMinutes()
 
