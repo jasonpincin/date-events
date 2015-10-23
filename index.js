@@ -78,6 +78,7 @@ module.exports = function createDateEmitter (options) {
             })
             ;[hourPadded, '*'].forEach(function (hour) {
                 ;[minutePadded, '*'].forEach(function (minute) {
+                    emitter.emit(fmt(wdtFmt, days[weekday - 1], hour, minute), now)
                     emitter.emit(fmt(tFmt, hour, minute), now)
                 })
             })
@@ -100,11 +101,6 @@ module.exports = function createDateEmitter (options) {
             minutePadded = ('0' + minute).slice(-2)
             emitter.emit('weekday', weekday, days[weekday - 1])
             emitter.emit(days[weekday - 1])
-            ;[hourPadded, '*'].forEach(function (hour) {
-                ;[minutePadded, '*'].forEach(function (minute) {
-                    emitter.emit(fmt(wdtFmt, days[weekday - 1], hour, minute), now)
-                })
-            })
             last.weekday = weekday
         }
 
