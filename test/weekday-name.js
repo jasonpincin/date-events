@@ -21,7 +21,7 @@ test('weekday with time', function (t) {
     var clock = dateEvents({ startDate: new Date('2014-01-01') })
 
     // protect against minute flipping during test
-    if ((new Date).getSeconds() > 57) setTimeout(doTest, 3000)
+    if ((new Date).getSeconds() > 55) setTimeout(doTest, 6000)
     else doTest()
 
     function doTest () {
