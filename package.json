@@ -1,6 +1,6 @@
 {
   "name": "date-events",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "EventEmitter that emits date/time events",
   "main": "index.js",
   "repository": {
