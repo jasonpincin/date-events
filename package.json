@@ -1,7 +1,7 @@
 {
   "name": "date-events",
   "version": "1.0.0",
-  "description": "[PKGDESC]",
+  "description": "EventEmitter that emits date/time events",
   "main": "index.js",
   "repository": {
     "type": "git",

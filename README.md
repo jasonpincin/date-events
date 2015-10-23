@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/jasonpincin/date-events.svg?branch=master)](https://travis-ci.org/jasonpincin/date-events)
 [![Coverage Status](https://coveralls.io/repos/jasonpincin/date-events/badge.png?branch=master)](https://coveralls.io/r/jasonpincin/date-events?branch=master)
 
-Instance of EventEmitter that emits date/time events.
+EventEmitter that emits date/time events.
 
 ## usage
 
