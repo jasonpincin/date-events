@@ -7,7 +7,8 @@ test('weekday name event', function (t) {
     t.plan(1)
     var clock = dateEvents({ startDate: new Date('2014-01-01') })
 
-    var dayName = days[(new Date).getDay()]
+    var now     = new Date,
+        dayName = days[now.getDay()]
     clock.once(dayName, function () {
         t.pass('got weekday name event of: ' + dayName)
         clock.removeAllListeners()
@@ -19,24 +20,31 @@ test('weekday with time', function (t) {
     t.plan(4)
     var clock = dateEvents({ startDate: new Date('2014-01-01') })
 
-    var dayName       = days[(new Date).getDay()],
-        currentHour   = ('0' + (new Date).getHours()).slice(-2),
-        currentMinute = ('0' + (new Date).getMinutes()).slice(-2)
+    // protect against minute flipping during test
+    if ((new Date).getSeconds() > 57) setTimeout(doTest, 3000)
+    else doTest()
 
-    clock.once(dayName + ' ' + currentHour + ':' + currentMinute, function (date) {
-        t.ok(date instanceof Date, 'got weekday + hh:mm')
-    })
-    clock.once(dayName + ' ' + '*:' + currentMinute, function (date) {
-        t.ok(date instanceof Date, 'got weekday + *:mm')
-    })
-    clock.once(dayName + ' ' + currentHour + ':*', function (date) {
-        t.ok(date instanceof Date, 'got weekday + hh:*')
-    })
-    clock.once(dayName + ' *:*', function (date) {
-        t.ok(date instanceof Date, 'got weekday + *:*')
-    })
+    function doTest () {
+        var now           = new Date,
+            dayName       = days[now.getDay()],
+            currentHour   = ('0' + now.getHours()).slice(-2),
+            currentMinute = ('0' + now.getMinutes()).slice(-2)
 
-    setTimeout(function () {
-        clock.removeAllListeners()
-    }, 2500)
+        clock.once(dayName + ' ' + currentHour + ':' + currentMinute, function (date) {
+            t.ok(date instanceof Date, 'got weekday + hh:mm')
+        })
+        clock.once(dayName + ' ' + '*:' + currentMinute, function (date) {
+            t.ok(date instanceof Date, 'got weekday + *:mm')
+        })
+        clock.once(dayName + ' ' + currentHour + ':*', function (date) {
+            t.ok(date instanceof Date, 'got weekday + hh:*')
+        })
+        clock.once(dayName + ' *:*', function (date) {
+            t.ok(date instanceof Date, 'got weekday + *:*')
+        })
+
+        setTimeout(function () {
+            clock.removeAllListeners()
+        }, 2500)
+    }
 })
