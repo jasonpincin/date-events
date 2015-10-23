@@ -23,18 +23,27 @@
     "email": "jason@pincin.com",
     "url": "http://jason.pincin.com/"
   },
-  "contributors": [
-  ],
+  "contributors": [],
   "devDependencies": {
     "@jasonpincin/standard": "~5.0.0-6",
-    "istanbul": "~0.3.17",
+    "faucet": "0.0.1",
+    "istanbul": "~0.4.0",
     "opn": "~1.0.2",
+    "phantomjs": "~1.9.18",
+    "snazzy": "~2.0.1",
     "tap-dot": "~1.0.0",
     "tap-spec": "~4.1.0",
-    "tape": "~4.2.0"
+    "tape": "~4.2.0",
+    "zuul": "~3.7.1"
   },
   "scripts": {
-    "test": "make npm-test",
-    "coverage": "make npm-coverage"
+    "test": "npm run -s faucet && npm run -s lint && npm run -s check-cover",
+    "travis-test": "npm run -s tap && ((cat coverage/lcov.info | coveralls) || exit 0)",
+    "faucet": "istanbul cover --report lcov --print none -- tape test/*.js | faucet",
+    "tap": "istanbul cover --report lcov --print none -- tape test/*.js",
+    "phantom": "zuul --phantom -- test/*.js | faucet",
+    "lint": "standard | snazzy",
+    "check-cover": "istanbul check-coverage --statements 100 --branches 100 --functions 100 --lines 100 2>&1 | grep ERROR: ; (test ${PIPESTATUS[0]} -eq 0) || (istanbul report text; exit 1)",
+    "view-cover": "open coverage/index.html"
   }
 }
