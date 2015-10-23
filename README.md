@@ -52,12 +52,14 @@ and time events. Valid options include:
 The following events will be emitted at the proper times:
 
 * `year` - emitted with 4-digit year number
-* `month` - emitted with month number (1-12) and name (as 2nd emitted value), example: `6`, `june`
+* `month` - emitted with two values: month number (1-12) and (lowercase) month name
 * `date` - emitted with day of month number (1-31)
-* `weekday` - emitted with weekday number (1 - 7) and name (as 2nd emitted value), example: `1`, `sunday`
+* `weekday` - emitted with two values: weekday number (1 - 7) and (lowercase) day name
 * `hour` - emitted with hour number (0-23)
 * `minute` - emitted with minute number (0-59)
 * `second` - emitted with second number (0-59)
+* `january - december` - emitted at start of corresponding month, with no value
+* `sunday - saturday` - emitted at start of corresponding days, with no value
 * `YYYY-MM-DD` - emitted with Javascript `Date` object
 * `YYYY-MM-DD HH:MM` - emiitetd with Javascript `Date` object
 * `HH:MM` - emitted with Javascript `Date` object
