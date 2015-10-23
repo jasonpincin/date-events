@@ -60,10 +60,14 @@ The following events will be emitted at the proper times:
 * `second` - emitted with second number (0-59)
 * `january` through `december` - emitted at start of corresponding month, with no value
 * `sunday` through `saturday` - emitted at start of corresponding days, with no value
-* `sunday 00:00` through `saturday 23:59` - emitted at appropriate time of corresponding day
+* `sunday HH:MM` through `saturday HH:MM` - emitted at appropriate time of corresponding day
 * `YYYY-MM-DD` - emitted with Javascript `Date` object
 * `YYYY-MM-DD HH:MM` - emiitetd with Javascript `Date` object
 * `HH:MM` - emitted with Javascript `Date` object
+
+#### wildcards
+
+In the above events, wildcards (`*`) may be substituded in place of any of the following: `YYYY`, `MM`, `DD`, `HH`, or `MM`. The wildcard will match any value. So to match every day of June, in every year for example, the event would look like: `*-06-*`.
 
 ### exiting
 
