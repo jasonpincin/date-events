@@ -44,6 +44,7 @@
     "phantom": "zuul --phantom -- test/*.js | faucet",
     "lint": "standard | snazzy",
     "check-cover": "istanbul check-coverage --statements 100 --branches 100 --functions 100 --lines 100 2>&1 | grep ERROR: ; (test ${PIPESTATUS[0]} -eq 0) || (istanbul report text; exit 1)",
-    "view-cover": "open coverage/index.html"
+    "view-cover": "istanbul report text",
+    "open-cover": "open coverage/index.html"
   }
 }

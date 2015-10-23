@@ -95,14 +95,14 @@ npm install date-events
 
 ## testing
 
-`npm test [--dot | --spec] [--grep=pattern]`
-
-Specifying `--dot` or `--spec` will change the output from the default TAP style. 
-Specifying `--grep` will only run the test files that match the given pattern.
+`npm test`
 
 ### coverage
 
-`npm run coverage [--html]`
+`npm run view-cover`
 
-This will output a textual coverage report. Including `--html` will also open 
-an HTML coverage report in the default browser.
+This will output a textual coverage report.
+
+`npm run open-cover`
+
+This will open an HTML coverage report in the default browser.
